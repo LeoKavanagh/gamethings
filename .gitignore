@@ -1,0 +1,7 @@
+.bsp/
+.dotty-ide-artifact
+.dotty-ide.json
+.vscode/
+project/project/
+project/target/
+target/
