@@ -1,32 +1,33 @@
 import scala.util.Random
 
-object Cards:
+object Cards {
 
-  enum Suit:
-    case Clubs, Diamonds, Hearts, Spades
+  val suits = List("Clubs", "Diamonds", "Hearts", "Spades")
+  val ranks = List("Ace", "Two", "Three", "Four", "Five",
+                   "Six", "Seven", "Eight", "Nine", "Ten",
+                   "Jack", "Queen", "King")
 
-  enum Rank:
-    case Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King
-
-  import Suit._
-  import Rank._
-
-  case class Card (rank: Rank, suit: Suit):
+  case class Card (rank: String, suit: String) {
     override def toString() = s"${rank} of ${suit}"
+  }
 
+  type Hand = List[Card]
 
-  type Hand = Array[Card]
-
-  def makeDeck(): Hand =
-    val deck: Array[Card] = for {
-      rank <- Rank.values
-      suit <- Suit.values 
+  def makeDeck(): Hand = {
+    val deck: List[Card] = for {
+      rank <-ranks
+      suit <- suits
       } yield Card(rank, suit)
     deck
+  }
 
-  def chooseCards(deck: Hand, n: Int): Hand =
-    deck
+  def chooseCards(deck: Hand, n: Int): (Hand, Hand) = {
+    val hand = deck
       .map(x => (Random.nextFloat(), x))
       .sortBy(_._1)
       .map(_._2)
       .take(n)
+    val restOfDeck = deck.diff(hand)
+    (hand, restOfDeck)
+  }
+}
