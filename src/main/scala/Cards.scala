@@ -21,7 +21,7 @@ object Cards {
     deck
   }
 
-  def chooseCards(deck: Hand, n: Int): (Hand, Hand) = {
+  def dealCards(deck: Hand, n: Int): (Hand, Hand) = {
     val hand = deck
       .map(x => (Random.nextFloat(), x))
       .sortBy(_._1)

@@ -1,5 +1,5 @@
 import Dice.dice
-import Cards.{makeDeck, chooseCards}
+import Cards.{makeDeck, dealCards}
 import org.scalajs.dom
 import org.scalajs.dom.document
 
@@ -29,7 +29,7 @@ object Main {
 
   def pickACard(targetTag: String): Unit = {
     val deck = makeDeck()
-    val hand = chooseCards(deck, 5)._1
+    val (hand, restOfDeck) = dealCards(deck, 1)
     val msg = s"You got ${hand.mkString(", ")}"
     changePar(document.body, msg, targetTag)
   }
