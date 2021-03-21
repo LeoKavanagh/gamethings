@@ -1,5 +1,5 @@
 import Dice.dice
-import Cards.{makeDeck, dealCards}
+import Cards.{Card, Hand, Deck}
 import org.scalajs.dom
 import org.scalajs.dom.document
 
@@ -11,48 +11,21 @@ object Main {
     newNode.setAttribute("style", "text-align: center")
     targetNode.appendChild(newNode)
   }
-
-  def setHeader(targetNode: dom.Node): Unit = {
-    appendTextNode(targetNode, "h1", "Game Things")
-  }
-
+  
   def changePar(targetNode: dom.Node, text: String, elementId: String): Unit = {
     val parNode = document.getElementById(elementId)
     parNode.textContent = text
   }
 
   def addDieRoll(targetTag: String): Unit = {
-    val diceValues = dice(1)
-    val msg = s"You rolled ${diceValues.mkString}"
+    val diceValues = dice(2)
+    val msg = s"You rolled ${diceValues.mkString(" and ")}, giving ${diceValues.sum} "
     changePar(document.body, msg, targetTag)
   }
 
-  def pickACard(targetTag: String): Unit = {
-    val deck = makeDeck()
-    val (hand, restOfDeck) = dealCards(deck, 1)
-    val msg = s"You got ${hand.mkString(", ")}"
-    changePar(document.body, msg, targetTag)
-  }
-
-  def appendGame(targetNode: dom.Node, elemId: String, headerText: String): Unit = {
-
-    val gameDiv = document.createElement("div")
-    gameDiv.setAttribute("id", elemId)
-    gameDiv.setAttribute("style", "justify-content: center; text-align: center;")
-
-    val gameHeader = document.createElement("h2")
-    gameHeader.textContent = headerText
-    gameHeader.setAttribute("id", elemId)
-    gameHeader.setAttribute("style", "text-align: center")
-
-    val gameResult = document.createElement("h3")
-    gameResult.setAttribute("id", elemId + "Result")
-    gameResult.setAttribute("style", "text-align: center")
-
-    gameDiv.appendChild(gameHeader)
-    gameDiv.appendChild(gameResult)
-    targetNode.appendChild(gameDiv)
-
+  def cardMessage(card: Option[Card]): String = card match {
+    case Some(x) => s"You were dealt the ${x}"
+    case None => "No cards left. Shuffle the deck."
   }
 
   def gameButton(buttonText: String, buttonFunction: (String => Unit), thing: String): org.scalajs.dom.Node = {
@@ -60,18 +33,26 @@ object Main {
     val button = document.createElement("button")
     button.textContent = buttonText
     button.setAttribute("class", "block")
-
     button.addEventListener("click", { (e: dom.MouseEvent) =>
       buttonFunction(thing)
     })
-
     button
-
   }
 
   def setupUI(): Unit = {
 
-    setHeader(document.body)
+    val deck = new Deck()
+    println(deck.remaining)
+
+    def pickACard(deck: Deck, targetTag: String): Unit = {
+
+      val card = deck.dealCard()
+      val msg: String = cardMessage(card)
+      
+      changePar(document.getElementById("cardGame"), msg, "cardGameResult")
+    }
+
+    appendTextNode(document.body, "h1", "Game Things")
 
     val mainDiv = document.createElement("div")
     mainDiv.setAttribute("id", "mainDiv")
@@ -79,14 +60,71 @@ object Main {
 
     document.body.appendChild(mainDiv)
 
-    appendGame(document.body, elemId="diceGame", headerText="Dice")
+    /* ==========================================================================  */
+
+    val diceElemId = "diceGame"
+    val diceDiv = document.createElement("div")
+    diceDiv.setAttribute("id", diceElemId)
+    diceDiv.setAttribute("style", "justify-content: center; text-align: center;")
+
+    val diceHeader = document.createElement("h2")
+    diceHeader.textContent = "Dice"
+    diceHeader.setAttribute("id", diceElemId)
+    diceHeader.setAttribute("style", "text-align: center")
+
+    val diceResult = document.createElement("h3")
+    diceResult.setAttribute("id", diceElemId + "Result")
+    diceResult.setAttribute("style", "text-align: center")
+
+    diceDiv.appendChild(diceHeader)
+    diceDiv.appendChild(diceResult)
+    document.body.appendChild(diceDiv)
+
     val diceButton = gameButton("Roll The Dice", addDieRoll, "diceGameResult")
-    document.getElementById("diceGame").appendChild(diceButton)
+    document.getElementById(diceElemId).appendChild(diceButton)
 
-    appendGame(document.body, elemId="cardGame", headerText="Card")
-    val cardButton = gameButton("Pick A Card", pickACard, "cardGameResult")
-    document.getElementById("cardGame").appendChild(cardButton)
+    /* ==========================================================================  */
 
+    val cardDiv = document.createElement("div")
+    val cardElemId: String = "cardGame"
+    cardDiv.setAttribute("id", cardElemId)
+    cardDiv.setAttribute("style", "justify-content: center; text-align: center;")
+
+    val cardHeader = document.createElement("h2")
+    cardHeader.textContent = "Card"
+    cardHeader.setAttribute("id", cardElemId)
+    cardHeader.setAttribute("style", "text-align: center")
+
+    val cardResult = document.createElement("h3")
+    cardResult.setAttribute("id", cardElemId + "Result")
+    cardResult.setAttribute("style", "text-align: center")
+
+    cardDiv.appendChild(cardHeader)
+    cardDiv.appendChild(cardResult)
+    document.body.appendChild(cardDiv)
+
+    val dealButton = document.createElement("button")
+    dealButton.textContent = "Pick A Card"
+    dealButton.setAttribute("id", "dealButton")
+    dealButton.setAttribute("class", "block")
+    
+    dealButton.addEventListener("click", { (e: dom.MouseEvent) =>
+      pickACard(deck, cardElemId)
+    })
+
+    document.getElementById(cardElemId).appendChild(dealButton)
+
+    val shuffleButton = document.createElement("button")
+    shuffleButton.textContent = "Shuffle The Deck"
+    shuffleButton.setAttribute("id", "shuffleButton")
+    shuffleButton.setAttribute("class", "block")
+    
+    shuffleButton.addEventListener("click", { (e: dom.MouseEvent) =>
+      deck.shuffle()
+    })
+
+    document.getElementById(cardElemId).appendChild(shuffleButton)
+   
   }
 
   def main(args: Array[String]): Unit = {
