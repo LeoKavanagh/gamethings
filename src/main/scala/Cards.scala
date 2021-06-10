@@ -1,22 +1,22 @@
 import scala.util.Random
 
-object Cards {
+object Cards:
 
   val suits = List("Clubs", "Diamonds", "Hearts", "Spades")
   val ranks = List("Ace", "Two", "Three", "Four", "Five",
                    "Six", "Seven", "Eight", "Nine", "Ten",
                    "Jack", "Queen", "King")
 
-  case class Card (rank: String, suit: String) {
-    override def toString() = s"${rank} of ${suit}"
-  }
+  case class Card(rank: String, suit: String):
+    override def toString = s"${rank} of ${suit}"
+
 
   type Hand = List[Card]
 
 
-  class Deck() {
+  class Deck():
 
-    private def makeDeck(): Hand = {
+    private def makeDeck(): Hand =
       val deck: List[Card] = for {
         rank <-ranks
         suit <- suits
@@ -26,7 +26,6 @@ object Cards {
         .sortBy(_._1)
         .map(_._2)
       shuffledDeck
-    }
 
     var remaining: Hand = makeDeck()
     var seen: Hand = List()
@@ -35,10 +34,10 @@ object Cards {
     def dealCard(): Option[Card] = remaining match {
       case Nil => None
       case x :: Nil => {
-	seen = x :: seen
-	remaining = Nil
-	Some(x)
-      }
+        seen = x :: seen
+        remaining = Nil
+        Some(x)
+            }
       case x :: xs => {
         seen = x :: seen
         remaining = xs
@@ -46,11 +45,6 @@ object Cards {
       }
     }
 
-    def shuffle() = {
+    def shuffle() =
       remaining = makeDeck()
       seen = List()
-    }
-
-  }
-
-}

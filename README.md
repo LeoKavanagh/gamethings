@@ -7,12 +7,11 @@ My other branch uses State Monads.
 This started out as a toy project for playing with Scala.js, Scala 3, and
 mutating state (fairly) functionally.
 
-At time of writing it is Scala.js,
-Scala 2.13 (because Scala.js DOM is not on Scala 3 yet),
-and mutating state with vars and global variables.
+At time of writing it is Scala.js, Scala 3, and dealing with state in a mostly
+functional-reactive way with [Laminar](https://laminar.dev).
 
-But it does what I want it do to, and it works on the very basic web hosting
-I'm using.
+But it does what I want it do to, and it works on the very basic
+shared web hosting I'm using.
 
 ## Description
 
@@ -49,40 +48,25 @@ random number generators. That's a subject for another day.
 You'll need Scala, sbt, and
 [Node.js](https://nodejs.org/en/) installed.
 
-Install the required Node.js packages from `package-lock.json`:
-
-``
-npm ci
-``
-
 Generate the Javascript file with
 
 ``
 sbt fullOptJS
 ``
 
-Copy the optimised Javascript file to `express/public`:
-
-```
-cp target/scala-2.13/gamethings-opt.js express/public/gamethings.opt.js
-```
-
-There's a way of making sbt do all of this in the one go for you,
-but I didn't bother trying to figure it out.
-
 ## Usage
 
 The Scala code itself places all the various HTML tags on the web page.
 
 In and of itself, we can't actually do anything with this file, so we'll load it
-into a HTML file and run it with a really simple ExpressJS web app.
+into a HTML file and run it with a really simple Python web app.
 
 ``
-node express/app.js
+python3 -m http.server
 ``
 
-Now go to [http://localhost:3000](http://localhost:3000).
-All going well, you should see a button to press. Bain triail as.
+Now go to [http://localhost:8000](http://localhost:3000).
+All going well, you should see a few buttons to press.
 
 ## Contact
 

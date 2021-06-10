@@ -1,6 +1,6 @@
 import scala.util.Random
 
 object Dice {
-    def dice(nRolls: Int): Seq[Int] =
-        Seq.fill(nRolls)(Random.between(1, 7))
+    def roll(nDice: Int): Int =
+        Seq.fill(nDice)(Random.between(1, 7)).reduce(_ + _)
 }
